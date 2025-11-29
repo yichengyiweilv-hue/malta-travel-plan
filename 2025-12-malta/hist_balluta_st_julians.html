@@ -1,0 +1,157 @@
+"<!DOCTYPE html>
+<html lang=""zh-CN"">
+<head>
+  <meta charset=""UTF-8"">
+  <title>Balluta 湾与圣朱利安斯 St Julian's · 马耳他旅行讲解</title>
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, ""PingFang SC"",
+                   ""Hiragino Sans GB"", ""Microsoft YaHei"", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+    .wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 12px 40px;
+    }
+    header {
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      color: #154c79;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #154c79;
+      background: #fff;
+      color: #154c79;
+      cursor: pointer;
+    }
+    .btn.stop {
+      border-color: #999;
+      color: #555;
+    }
+    .btn:hover {
+      background: #154c79;
+      color: #fff;
+    }
+    .btn.stop:hover {
+      background: #666;
+      color: #fff;
+    }
+    .back-link {
+      font-size: 13px;
+      text-decoration: none;
+      color: #1f6aa6;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 12px 16px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    #content p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin: 0 0 10px;
+      text-align: justify;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 19px; }
+      #content p { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div class=""wrapper"">
+  <header>
+    <h1>Balluta 湾与圣朱利安斯 St Julian's</h1>
+    <div class=""subtitle"">从渔村到夜生活中心的海湾小城</div>
+  </header>
+
+  <div class=""toolbar"">
+    <button class=""btn"" onclick=""speakMain()"">▶ 播放本页讲解</button>
+    <button class=""btn stop"" onclick=""stopSpeak()"">■ 停止朗读</button>
+    <a class=""back-link"" href=""index.html"">← 返回行程总览</a>
+  </div>
+
+  <div class=""card"" id=""content"">
+      <p>圣朱利安斯如今给人的第一印象往往是海边餐厅、酒店和夜生活，但直到十九世纪末，这里仍只是瓦莱塔人夏季来避暑的小渔村。随着沿海别墅和度假住宅增多，以及二十世纪旅游业发展，原本寂静的海湾逐渐演变为今日人口与游客密集的度假小镇，其中 Paceville 区更成为马耳他夜生活最集中的区域。</p>
+      <p>Balluta Bay 则保留了更多生活气息与建筑趣味。海湾一侧矗立着新哥特式的加尔默罗教堂，尖塔与拱窗在夕阳时分格外上镜；另一侧的 Balluta Buildings 是 1928 年建成的新艺术风格公寓楼，由建筑师 Giuseppe Psaila 设计，被认为是岛上最重要的 Art Nouveau 作品之一。它原本为贵族家族打造的豪华公寓，如今外立面和阳台仍然细节丰富，是整个海湾的视觉焦点。</p>
+      <p>从 Malta Marriott 出发沿海边步道向北或向南散步，你们会路过咖啡馆、小餐厅、游泳平台以及面向海湾的公寓，高峰季节时则能看到语言学校学生和度假家庭混杂其间。再往北走到 Paceville，夜店、酒吧和赌场密集，节奏明显加快。如果把整条海岸线当作一条时间轴，Balluta 更像是介于“传统渔村与现代娱乐区”之间的缓冲带，让人既能感受到历史沉淀，又不会被喧闹完全淹没。</p>
+  </div>
+</div>
+
+<script>
+  let voices = [];
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    voices = window.speechSynthesis.getVoices() || [];
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function speakText(text) {
+    if (!('speechSynthesis' in window)) {
+      alert('当前浏览器不支持语音朗读，可以直接阅读文字。');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+
+    let zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('zh'));
+    if (!zhVoice) {
+      zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes('zh-cn'));
+    }
+    if (zhVoice) {
+      utter.voice = zhVoice;
+    } else if (voices.length > 0) {
+      utter.voice = voices[0];
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function speakMain() {
+    const paras = Array.from(document.querySelectorAll('#content p'));
+    const text = paras.map(p => p.textContent.trim()).join('。');
+    speakText(text);
+  }
+
+  function stopSpeak() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+</script>
+</body>
+</html>
+"
