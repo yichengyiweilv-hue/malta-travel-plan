@@ -589,13 +589,26 @@
     });
     dayDiv.appendChild(title);
 
-    itineraryData[dateStr].forEach(item => {
+    const items = itineraryData[dateStr];
+
+    items.forEach((item, index) => {
       const actDiv = document.createElement('div');
       actDiv.className = 'activity';
 
       const timeSpan = document.createElement('span');
       timeSpan.className = 'time';
-      timeSpan.textContent = item.time;
+
+      // ✅ 关键改动：连续“备选”餐厅，只在第一行显示时间
+      let showTime = true;
+      if (index > 0) {
+        const prev = items[index - 1];
+        const thisIsOption = item.html.includes("备选");
+        const prevIsOption = prev.html.includes("备选");
+        if (thisIsOption && prevIsOption) {
+          showTime = false;
+        }
+      }
+      timeSpan.textContent = showTime ? item.time : "";
       actDiv.appendChild(timeSpan);
 
       const descSpan = document.createElement('span');
