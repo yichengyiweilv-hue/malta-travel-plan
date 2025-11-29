@@ -1,0 +1,16 @@
+malta-travel-plan/
+│
+├── index.html        
+│
+├── malta/
+│     ├── index.html
+│     ├── hist_valletta.html
+│     ├── hist_mdina.html
+│     ├── hist_upper_barrakka.html
+│     └── ... 共 15 个页面
+│
+├── japan/
+│     └── index.html（你未来的）
+│
+└── korea/
+      └── index.html（未来用）
