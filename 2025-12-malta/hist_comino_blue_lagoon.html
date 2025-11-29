@@ -1,0 +1,157 @@
+"<!DOCTYPE html>
+<html lang=""zh-CN"">
+<head>
+  <meta charset=""UTF-8"">
+  <title>Comino 岛与蓝礁湖 Blue Lagoon · 马耳他旅行讲解</title>
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, ""PingFang SC"",
+                   ""Hiragino Sans GB"", ""Microsoft YaHei"", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+    .wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 12px 40px;
+    }
+    header {
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      color: #154c79;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #154c79;
+      background: #fff;
+      color: #154c79;
+      cursor: pointer;
+    }
+    .btn.stop {
+      border-color: #999;
+      color: #555;
+    }
+    .btn:hover {
+      background: #154c79;
+      color: #fff;
+    }
+    .btn.stop:hover {
+      background: #666;
+      color: #fff;
+    }
+    .back-link {
+      font-size: 13px;
+      text-decoration: none;
+      color: #1f6aa6;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 12px 16px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    #content p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin: 0 0 10px;
+      text-align: justify;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 19px; }
+      #content p { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div class=""wrapper"">
+  <header>
+    <h1>Comino 岛与蓝礁湖 Blue Lagoon</h1>
+    <div class=""subtitle"">自然保育区中的网红海湾</div>
+  </header>
+
+  <div class=""toolbar"">
+    <button class=""btn"" onclick=""speakMain()"">▶ 播放本页讲解</button>
+    <button class=""btn stop"" onclick=""stopSpeak()"">■ 停止朗读</button>
+    <a class=""back-link"" href=""index.html"">← 返回行程总览</a>
+  </div>
+
+  <div class=""card"" id=""content"">
+      <p>Comino 是夹在马耳他本岛与戈佐之间的一座小岛，长期人口极少，曾被用作流放和海防瞭望的位置。如今全岛被划入自然保育区，而最出名的蓝礁湖 Blue Lagoon 则位于 Comino 与小岛 Cominotto 之间的狭长水道。这里的海水因为浅滩白沙和石灰岩反射，在晴天呈现出夸张的奶蓝色与翠绿色，对比悬崖与礁石，形成极具“社交媒体体质”的画面。</p>
+      <p>过去的旺季里，一天最多有上万人同时挤在这片狭小海湾和岩石平台上，大量快艇、音乐船和流动摊位让环境压力急剧上升，也引发安全与垃圾问题。近年来环保团体和媒体多次呼吁采取更严格的游客管理措施，政府则推行了一系列改革：包括限制蓝礁湖同时容纳的游客数量，引入预约系统、扩展游泳区并重新规划船只停泊和摊位位置，希望在观光收益和生态保护之间找到平衡。</p>
+      <p>对你们来说，冬季前往蓝礁湖，多半不会遇到极端拥挤的场景，却可以提前感受这些新规带来的变化。无论是从 Ċirkewwa 搭乘渡轮或小船登岛，在悬崖步道上散步，还是只是远远俯瞰这片著名海湾，都可以一边欣赏景色，一边思考一座小岛如何面对全球打卡热点带来的压力，以及旅游业如何学习“变慢”和自我约束。</p>
+  </div>
+</div>
+
+<script>
+  let voices = [];
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    voices = window.speechSynthesis.getVoices() || [];
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function speakText(text) {
+    if (!('speechSynthesis' in window)) {
+      alert('当前浏览器不支持语音朗读，可以直接阅读文字。');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+
+    let zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('zh'));
+    if (!zhVoice) {
+      zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes('zh-cn'));
+    }
+    if (zhVoice) {
+      utter.voice = zhVoice;
+    } else if (voices.length > 0) {
+      utter.voice = voices[0];
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function speakMain() {
+    const paras = Array.from(document.querySelectorAll('#content p'));
+    const text = paras.map(p => p.textContent.trim()).join('。');
+    speakText(text);
+  }
+
+  function stopSpeak() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+</script>
+</body>
+</html>
+"
