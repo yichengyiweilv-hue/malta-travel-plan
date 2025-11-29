@@ -1,19 +1,637 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>马耳他旅行计划</title>
+  <meta charset="UTF-8">
+  <title>马耳他假期行程（2025年12月22日–2026年1月2日）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary: #154c79;
+      --primary-light: #1f6aa6;
+      --bg: #f7f7f7;
+      --card-bg: #ffffff;
+      --border: #e0e0e0;
+      --text-main: #222;
+      --text-sub: #666;
+      --accent: #ffb347;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 16px 12px 12px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    header p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 900px;
+      margin: 16px auto 24px;
+      padding: 0 10px;
+    }
+    .date-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+      justify-content: flex-start;
+    }
+    .date-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-sub);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .date-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    }
+    .itinerary {
+      display: none;
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 14px 12px 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .itinerary.active {
+      display: block;
+    }
+    .day-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+    .activity {
+      display: flex;
+      padding: 5px 0;
+      border-bottom: 1px dashed #eee;
+    }
+    .activity:last-child {
+      border-bottom: none;
+    }
+    .time {
+      flex: 0 0 52px;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--primary-light);
+    }
+    .desc {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+    .desc small {
+      display: block;
+      color: var(--text-sub);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      header h1 { font-size: 18px; }
+      .time { flex-basis: 48px; }
+      .activity { padding: 4px 0; }
+    }
+  </style>
 </head>
 <body>
-<h1>马耳他七日游行程</h1>
-<ul>
-<li>第一天：抵达瓦莱塔，游览圣约翰共主教座堂</li>
-<li>第二天：游览三姐妹城</li>
-<li>第三天：蓝洞潜水</li>
-<li>第四天：戈佐岛一日游</li>
-<li>第五天：参观姆迪纳和维多利亚城堡</li>
-<li>第六天：马耳他海滩休闲</li>
-<li>第七天：购物并返回</li>
-</ul>
+<header>
+  <h1>马耳他假期行程</h1>
+  <p>2025年12月22日 – 2026年1月2日 · Valletta + Balluta Bay（Malta Marriott）</p>
+</header>
+
+<div class="container">
+  <div id="date-buttons" class="date-buttons"></div>
+  <div id="itineraries"></div>
+</div>
+
+<script>
+  // 行程数据：按日期分组，每个项包含时间和 HTML 描述
+  const itineraryData = {
+    "2025-12-22": [
+      {
+        time: "18:50",
+        html: `抵达 <a href="https://www.google.com/maps/search/?api=1&query=Malta+International+Airport" target="_blank" rel="noopener noreferrer">Malta International Airport</a>（马耳他国际机场）。`
+      },
+      {
+        time: "19:20",
+        html: `乘坐出租车前往酒店 <a href="https://www.google.com/maps/search/?api=1&query=Domus+Zamittello+Valletta" target="_blank" rel="noopener noreferrer">Domus Zamittello</a>，车程约15–20分钟，费用约€17–20。`
+      },
+      {
+        time: "20:00",
+        html: `办理入住，整理行李，在房间稍作休息。`
+      },
+      {
+        time: "21:00",
+        html: `如果不太累，可以从酒店步行在瓦莱塔老城简单走一圈：City Gate → Republic Street → <a href="https://www.google.com/maps/search/?api=1&query=Upper+Barrakka+Gardens+Valletta" target="_blank" rel="noopener noreferrer">Upper Barrakka Gardens</a>，总步行时间约30–40分钟。`
+      },
+      {
+        time: "21:15",
+        html: `晚餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Rampila+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Rampila</a> —— 地中海 / 马耳他菜，带城墙露台景观；从酒店步行约6–8分钟；谷歌评分约4.4★；人均约€40–50。`
+      },
+      {
+        time: "21:16",
+        html: `晚餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=Nenu+the+Artisan+Baker+Valletta" target="_blank" rel="noopener noreferrer">Nenu the Artisan Baker</a> —— 马耳他家常菜 / 烤饼；从酒店步行约8分钟；谷歌评分约4.4★；人均约€20–30。`
+      },
+      {
+        time: "21:17",
+        html: `晚餐备选 3：<a href="https://www.google.com/maps/search/?api=1&query=The+Harbour+Club+Valletta" target="_blank" rel="noopener noreferrer">The Harbour Club</a> —— 现代地中海料理，港景露台；从酒店步行约10分钟；谷歌评分约4.4★；人均约€35–45。`
+      }
+    ],
+
+    "2025-12-23": [
+      {
+        time: "10:30",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Domus+Zamittello+Valletta" target="_blank" rel="noopener noreferrer">Domus Zamittello</a> 出发，步行穿过 City Gate，前往 <a href="https://www.google.com/maps/search/?api=1&query=Upper+Barrakka+Gardens+Valletta" target="_blank" rel="noopener noreferrer">Upper Barrakka Gardens</a>，俯瞰 Grand Harbour。步行约10分钟。`
+      },
+      {
+        time: "11:30",
+        html: `沿 Republic Street 慢慢向下走，经过 <a href="https://www.google.com/maps/search/?api=1&query=Old+Mint+Street+Valletta" target="_blank" rel="noopener noreferrer">Old Mint Street</a> 一带小巷，感受老城石墙与阳台。`
+      },
+      {
+        time: "12:45",
+        html: `午餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Soul+Food+Valletta" target="_blank" rel="noopener noreferrer">Soul Food</a> —— 健康 / 素食为主；距旧城步行约5–7分钟；谷歌评分约4.6★；人均约€15–25。`
+      },
+      {
+        time: "12:46",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=Rubino+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Rubino</a> —— 传统马耳他 + 意大利菜；从酒店步行约6分钟；谷歌评分约4.5★；人均约€30–40。`
+      },
+      {
+        time: "12:47",
+        html: `午餐备选 3：<a href="https://www.google.com/maps/search/?api=1&query=Beati+Paoli+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Beati Paoli</a> —— 地中海 / 海鲜；步行约6–8分钟；谷歌评分约4.5★；人均约€25–35。`
+      },
+      {
+        time: "14:30",
+        html: `午餐后在 <a href="https://www.google.com/maps/search/?api=1&query=St+John%27s+Co-Cathedral+Valletta" target="_blank" rel="noopener noreferrer">St John's Co‑Cathedral</a> 内部参观（尽量选择非弥撒时段），再随意逛逛老城小店。`
+      },
+      {
+        time: "17:00",
+        html: `回酒店稍作休息，整理着装，准备前往晚餐。`
+      },
+      {
+        time: "18:15",
+        html: `步行前往晚餐餐厅 <a href="https://www.google.com/maps/search/?api=1&query=ION+Harbour+Malta" target="_blank" rel="noopener noreferrer">ION Harbour</a>（位于 Iniala Harbour House 顶楼），从酒店步行约10–12分钟，预留时间拍一下港口黄昏景色。`
+      },
+      {
+        time: "18:30",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=ION+Harbour+Malta" target="_blank" rel="noopener noreferrer">ION Harbour</a> 享用米其林二星晚餐（已预订 18:30–21:00），建议选择 tasting menu，预计人均消费 €200+。`
+      },
+      {
+        time: "21:15",
+        html: `晚餐后步行回 City Gate 一带，顺路逛 <a href="https://www.google.com/maps/search/?api=1&query=Triton+Fountain+Valletta" target="_blank" rel="noopener noreferrer">Triton Fountain</a> 旁的 Fairyland Santa's City 圣诞城与圣诞市集，体验游乐项目与摊位小吃。`
+      }
+    ],
+
+    "2025-12-24": [
+      {
+        time: "10:30",
+        html: `从酒店出发，步行前往 Upper Barrakka 电梯（约8分钟），乘电梯下到海滨。`
+      },
+      {
+        time: "11:00",
+        html: `在 Valletta Waterfront 乘坐渡轮前往三姐妹城一带，在 <a href="https://www.google.com/maps/search/?api=1&query=Vittoriosa+Birgu+Malta" target="_blank" rel="noopener noreferrer">Vittoriosa (Birgu)</a> 登岸。渡轮航程约10–15分钟，单程船票约€2。`
+      },
+      {
+        time: "11:15",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Vittoriosa+Birgu+Malta" target="_blank" rel="noopener noreferrer">Birgu</a> 老城小巷、海滨长廊漫步，可顺路走到 <a href="https://www.google.com/maps/search/?api=1&query=Fort+St+Angelo+Malta" target="_blank" rel="noopener noreferrer">Fort St Angelo</a> 外观。`
+      },
+      {
+        time: "13:00",
+        html: `午餐备选 1（Birgu）：<a href="https://www.google.com/maps/search/?api=1&query=Don+Berto+Birgu" target="_blank" rel="noopener noreferrer">Don Berto</a> —— 海鲜 / 地中海菜，位于码头边；从 Birgu 核心区步行约5–8分钟；谷歌评分约4.3★；人均约€30–40。`
+      },
+      {
+        time: "13:01",
+        html: `午餐备选 2（Birgu）：<a href="https://www.google.com/maps/search/?api=1&query=Tal-Petut+Birgu" target="_blank" rel="noopener noreferrer">Tal‑Petut</a> —— 传统马耳他菜；步行约5分钟；谷歌评分约4.6★；人均约€30–40。`
+      },
+      {
+        time: "15:30",
+        html: `乘渡轮返回瓦莱塔（约15分钟），乘电梯回老城，回酒店休息，为晚上活动和子夜弥撒养精蓄锐。`
+      },
+      {
+        time: "18:00",
+        html: `晚餐：前往 <a href="https://www.google.com/maps/search/?api=1&query=Noni+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Noni</a>（米其林一星，已预订 18:00–20:45），从酒店步行约6–8分钟。预计人均 €120–150。`
+      },
+      {
+        time: "21:30",
+        html: `晚餐后回酒店稍作整理，准备前往 <a href="https://www.google.com/maps/search/?api=1&query=St+John%27s+Co-Cathedral+Valletta" target="_blank" rel="noopener noreferrer">St John's Co‑Cathedral</a> 参加圣诞子夜弥撒。步行约6–8分钟，建议提前至少30分钟到达找到座位。`
+      },
+      {
+        time: "23:00",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=St+John%27s+Co-Cathedral+Valletta" target="_blank" rel="noopener noreferrer">St John's Co‑Cathedral</a> 参加子夜弥撒（具体时间以教堂当年公布为准），预计跨到25日0点左右结束。`
+      },
+      {
+        time: "00:15",
+        html: `从教堂步行返回酒店，注意街道人流和个人物品安全。`
+      }
+    ],
+
+    "2025-12-25": [
+      {
+        time: "10:30",
+        html: `圣诞节早上晚起，在酒店附近找一家咖啡馆做 Brunch，节日当天很多店铺不开门，可提前前一天确认营业时间。`
+      },
+      {
+        time: "12:00",
+        html: `在瓦莱塔老城随意漫步，重点可以再走一圈主要广场和教堂区域，看看本地家庭的圣诞装饰与马槽。`
+      },
+      {
+        time: "13:00",
+        html: `午餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Caffe+Cordina+Valletta" target="_blank" rel="noopener noreferrer">Caffe Cordina</a> —— 经典马耳他咖啡馆；从酒店步行约3分钟；谷歌评分约4.3★；人均约€15–25。`
+      },
+      {
+        time: "13:01",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=King%27s+Own+Band+Club+Bar+%26+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">King's Own Band Club</a> —— 本地人常去的小酒馆风餐厅；步行约4–5分钟；谷歌评分约4.4★；人均约€15–25。`
+      },
+      {
+        time: "15:00",
+        html: `下午可步行至 Marsamxett 一侧码头乘渡轮前往 <a href="https://www.google.com/maps/search/?api=1&query=Sliema+Ferries+Malta" target="_blank" rel="noopener noreferrer">Sliema Ferries</a>，船程约10–15分钟，单程约€2，在 Sliema 海滨长廊散步、喝咖啡。`
+      },
+      {
+        time: "17:00",
+        html: `乘渡轮返回瓦莱塔，黄昏时可在城门和 Triton Fountain 一带拍夜景。`
+      },
+      {
+        time: "19:00",
+        html: `晚餐备选 1：再次到 <a href="https://www.google.com/maps/search/?api=1&query=Rampila+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Rampila</a> 或其他喜欢的餐厅轻松吃一餐。`
+      }
+    ],
+
+    "2025-12-26": [
+      {
+        time: "10:30",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Domus+Zamittello+Valletta" target="_blank" rel="noopener noreferrer">Domus Zamittello</a> 打车前往 <a href="https://www.google.com/maps/search/?api=1&query=Mdina+Gate+Malta" target="_blank" rel="noopener noreferrer">Mdina Gate</a>（Mdina 古城城门）。车程约20–25分钟，费用约€20。`
+      },
+      {
+        time: "11:00",
+        html: `进入 <a href="https://www.google.com/maps/search/?api=1&query=Mdina+Old+City+Malta" target="_blank" rel="noopener noreferrer">Mdina</a> 古城，沿主街和城墙慢慢参观（建议留意 <a href="https://www.google.com/maps/search/?api=1&query=St+Paul%27s+Cathedral+Mdina" target="_blank" rel="noopener noreferrer">St Paul's Cathedral</a> 开放时间）。`
+      },
+      {
+        time: "13:00",
+        html: `午餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Fontanella+Tea+Garden+Mdina" target="_blank" rel="noopener noreferrer">Fontanella Tea Garden</a> —— 以蛋糕和城墙景观著名；步行即可到达；谷歌评分约4.4★；人均约€15–25。`
+      },
+      {
+        time: "13:01",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=de+Mondion+Mdina" target="_blank" rel="noopener noreferrer">de Mondion</a> —— Mdina 顶楼景观餐厅，米其林一星（价格较高）；需提前预订；人均€120+。`
+      },
+      {
+        time: "14:30",
+        html: `午餐后步行前往 <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Malta" target="_blank" rel="noopener noreferrer">Rabat</a> 小镇（约10分钟），可选参观地窟或在咖啡馆简单休息。`
+      },
+      {
+        time: "16:15",
+        html: `从 Mdina/Rabat 打车前往 <a href="https://www.google.com/maps/search/?api=1&query=Verdala+Palace+Buskett+Gardens" target="_blank" rel="noopener noreferrer">Verdala Palace / Buskett Gardens</a> 参加 Magical Illuminated Trail 彩灯步道，车程约10–15分钟，费用约€15。`
+      },
+      {
+        time: "17:00",
+        html: `在 Verdala 宫花园内体验 Magical Illuminated Trail 灯光步道，预计游览时间60–90分钟（需要提前在官网购票并选择时间段）。`
+      },
+      {
+        time: "18:30",
+        html: `打车返回瓦莱塔，车程约25–30分钟，费用约€25。晚餐可在老城附近随意选择轻松一点的餐厅。`
+      }
+    ],
+
+    "2025-12-27": [
+      {
+        time: "10:30",
+        html: `从酒店打车前往 <a href="https://www.google.com/maps/search/?api=1&query=Blue+Grotto+Malta" target="_blank" rel="noopener noreferrer">Blue Grotto</a>（蓝洞），车程约25分钟，费用约€25。`
+      },
+      {
+        time: "11:00",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Blue+Grotto+Malta" target="_blank" rel="noopener noreferrer">Blue Grotto</a> 乘船进入海蚀洞群（视当日海况开放而定），船程约20–25分钟。`
+      },
+      {
+        time: "11:45",
+        html: `在蓝洞观景台拍照，欣赏海岸线，停留约30分钟。`
+      },
+      {
+        time: "12:15",
+        html: `从蓝洞打车前往 <a href="https://www.google.com/maps/search/?api=1&query=Hagar+Qim+Temples+Malta" target="_blank" rel="noopener noreferrer">Ħaġar Qim & Mnajdra Temples</a> 巨石神庙群，车程约5–10分钟，费用约€10。`
+      },
+      {
+        time: "12:30",
+        html: `参观游客中心和神庙遗址，建议预留90分钟左右（注意冬季关闭时间较早）。`
+      },
+      {
+        time: "14:00",
+        html: `从神庙打车前往渔村 <a href="https://www.google.com/maps/search/?api=1&query=Marsaxlokk+Malta" target="_blank" rel="noopener noreferrer">Marsaxlokk</a>，车程约20分钟，费用约€20。`
+      },
+      {
+        time: "14:30",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Marsaxlokk+Harbour" target="_blank" rel="noopener noreferrer">Marsaxlokk Harbour</a> 海湾散步，看传统彩色渔船。`
+      },
+      {
+        time: "14:45",
+        html: `午餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Tartarun+Restaurant+Marsaxlokk" target="_blank" rel="noopener noreferrer">Tartarun</a> —— 海鲜为主；步行约3–5分钟；谷歌评分约4.5★；人均约€35–45。`
+      },
+      {
+        time: "14:46",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=Roots+Restaurant+Marsaxlokk" target="_blank" rel="noopener noreferrer">Roots</a> —— 本地海鲜餐厅；步行约3–5分钟；谷歌评分约4.5★；人均约€30–40。`
+      },
+      {
+        time: "17:00",
+        html: `打车返回瓦莱塔，车程约25分钟，费用约€25。晚上自由安排，可在老城找一家简单餐厅、早点休息。`
+      }
+    ],
+
+    "2025-12-28": [
+      {
+        time: "10:30",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Domus+Zamittello+Valletta" target="_blank" rel="noopener noreferrer">Domus Zamittello</a> 办理退房，乘出租车前往新酒店 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott Resort & Spa</a>（Balluta Bay）。车程约20分钟，费用约€15–20。`
+      },
+      {
+        time: "11:00",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott Resort & Spa</a> 办理入住或寄存行李，稍作休息。`
+      },
+      {
+        time: "11:30",
+        html: `从酒店出门，沿 Balluta Bay 海湾步道向 <a href="https://www.google.com/maps/search/?api=1&query=Sliema+Seafront" target="_blank" rel="noopener noreferrer">Sliema</a> 方向散步，一路都是海景，单程步行约30–40分钟。`
+      },
+      {
+        time: "13:00",
+        html: `午餐备选 1（Balluta Bay 附近）：<a href="https://www.google.com/maps/search/?api=1&query=Wigi%27s+Kitchen+St+Julian%27s" target="_blank" rel="noopener noreferrer">Wigi's Kitchen</a> —— 本地高分小馆，地中海 / 海鲜；离酒店步行约5分钟；谷歌评分约4.8★；人均约€35–45（建议预订）。`
+      },
+      {
+        time: "13:01",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=U+Bistrot+Balluta+Bay" target="_blank" rel="noopener noreferrer">U Bistrot</a> —— 早午餐 / 欧式餐点；步行约3–5分钟；谷歌评分约4.5★；人均约€20–30。`
+      },
+      {
+        time: "15:00",
+        html: `午后可回酒店休息，享受 SPA 或室内泳池，调整节奏。`
+      },
+      {
+        time: "20:00",
+        html: `夜间可在 <a href="https://www.google.com/maps/search/?api=1&query=Spinola+Bay+St+Julian%27s" target="_blank" rel="noopener noreferrer">Spinola Bay</a> 和 <a href="https://www.google.com/maps/search/?api=1&query=Paceville+St+Julian%27s" target="_blank" rel="noopener noreferrer">Paceville</a> 一带轻松体验圣朱利安斯的夜生活：先沿海湾散步，再挑一两家酒吧喝一杯，步行往返即可。`
+      }
+    ],
+
+    "2025-12-29": [
+      {
+        time: "08:30",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a> 乘出租车前往北端渡轮港 <a href="https://www.google.com/maps/search/?api=1&query=Cirkewwa+Ferry+Terminal+Malta" target="_blank" rel="noopener noreferrer">Ċirkewwa Ferry Terminal</a>，车程约30–35分钟，费用约€30–35。`
+      },
+      {
+        time: "09:15",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Cirkewwa+Ferry+Terminal+Malta" target="_blank" rel="noopener noreferrer">Ċirkewwa</a> 乘 Gozo 渡轮前往 <a href="https://www.google.com/maps/search/?api=1&query=Mgarr+Harbour+Gozo" target="_blank" rel="noopener noreferrer">Mgarr Harbour (Gozo)</a>，船程约25分钟，步行乘客往返船票约€5。`
+      },
+      {
+        time: "09:45",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Mgarr+Harbour+Gozo" target="_blank" rel="noopener noreferrer">Mgarr</a> 码头乘出租车前往 <a href="https://www.google.com/maps/search/?api=1&query=Victoria+Gozo" target="_blank" rel="noopener noreferrer">Victoria (Rabat, Gozo)</a>，车程约15分钟，费用约€12–15。`
+      },
+      {
+        time: "10:00",
+        html: `参观 <a href="https://www.google.com/maps/search/?api=1&query=Cittadella+Gozo" target="_blank" rel="noopener noreferrer">Cittadella</a>（Citadel 要塞）及周边老城街区，建议预留约2小时。`
+      },
+      {
+        time: "12:30",
+        html: `午餐备选 1（Victoria）：<a href="https://www.google.com/maps/search/?api=1&query=Ta%27+Rikardu+Gozo" target="_blank" rel="noopener noreferrer">Ta' Rikardu</a> —— 传统戈佐菜；步行可达；谷歌评分约4.5★；人均约€25–35。`
+      },
+      {
+        time: "12:31",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=Brookies+Restaurant+Gozo" target="_blank" rel="noopener noreferrer">Brookies</a> —— 山坡景观餐厅；从 Citadella 步行约10–15分钟或短途打车；谷歌评分约4.5★；人均约€30–40。`
+      },
+      {
+        time: "14:00",
+        html: `午餐后乘出租车前往 <a href="https://www.google.com/maps/search/?api=1&query=Dwejra+Bay+Gozo" target="_blank" rel="noopener noreferrer">Dwejra Bay</a>，车程约20分钟，费用约€15–20。`
+      },
+      {
+        time: "14:20",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Dwejra+Bay+Gozo" target="_blank" rel="noopener noreferrer">Dwejra</a> 区域散步，看 Azure Window 遗址海岸、Inland Sea 内海等，预留约1.5小时。`
+      },
+      {
+        time: "16:00",
+        html: `乘出租车前往 <a href="https://www.google.com/maps/search/?api=1&query=Ghajnsielem+Gozo" target="_blank" rel="noopener noreferrer">Għajnsielem</a> 的 Bethlehem f’ Għajnsielem 仿真圣诞村所在的 Ta' Passi Fields，车程约20–25分钟，费用约€15–20。`
+      },
+      {
+        time: "16:30",
+        html: `在 Bethlehem f’ Għajnsielem 圣诞村游览，体验“真人版”伯利恒村庄布景与表演，预计停留2小时左右（具体开放日和时间以当年官网为准）。`
+      },
+      {
+        time: "19:00",
+        html: `从 Ta' Passi Fields 步行或短途打车回 <a href="https://www.google.com/maps/search/?api=1&query=Mgarr+Harbour+Gozo" target="_blank" rel="noopener noreferrer">Mgarr Harbour</a>，乘渡轮返回 <a href="https://www.google.com/maps/search/?api=1&query=Cirkewwa+Ferry+Terminal+Malta" target="_blank" rel="noopener noreferrer">Ċirkewwa</a>。`
+      },
+      {
+        time: "19:45",
+        html: `从 Ċirkewwa 打车返回 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a>，车程约30–35分钟，费用约€30–35。`
+      }
+    ],
+
+    "2025-12-30": [
+      {
+        time: "09:00",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a> 打车前往 <a href="https://www.google.com/maps/search/?api=1&query=Cirkewwa+Ferry+Terminal+Malta" target="_blank" rel="noopener noreferrer">Ċirkewwa</a>，车程约30–35分钟，费用约€30–35。`
+      },
+      {
+        time: "09:45",
+        html: `从 Ċirkewwa 搭乘小船前往 <a href="https://www.google.com/maps/search/?api=1&query=Blue+Lagoon+Comino+Malta" target="_blank" rel="noopener noreferrer">Blue Lagoon (Comino)</a>，船程约20–25分钟，往返船票约€10–15（具体以船公司公布为准）。`
+      },
+      {
+        time: "10:15",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Blue+Lagoon+Comino+Malta" target="_blank" rel="noopener noreferrer">Blue Lagoon</a> 一带徒步、拍照，冬季不一定下水，注意防风保暖。预留约2.5–3小时。`
+      },
+      {
+        time: "13:15",
+        html: `乘小船返回 <a href="https://www.google.com/maps/search/?api=1&query=Cirkewwa+Ferry+Terminal+Malta" target="_blank" rel="noopener noreferrer">Ċirkewwa</a>。`
+      },
+      {
+        time: "13:30",
+        html: `从 Ċirkewwa 乘出租车前往 <a href="https://www.google.com/maps/search/?api=1&query=Popeye+Village+Malta" target="_blank" rel="noopener noreferrer">Popeye Village</a>（大力水手村），车程约10–15分钟，费用约€15。`
+      },
+      {
+        time: "13:45",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Popeye+Village+Malta" target="_blank" rel="noopener noreferrer">Popeye Village</a> 内参观电影场景、拍照，欣赏海湾景色，预留约2小时。`
+      },
+      {
+        time: "16:00",
+        html: `从 Popeye Village 乘出租车返回 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a>，车程约35–40分钟，费用约€30–35。`
+      },
+      {
+        time: "19:30",
+        html: `晚餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Wigi%27s+Kitchen+St+Julian%27s" target="_blank" rel="noopener noreferrer">Wigi's Kitchen</a>（如尚未光顾）或附近其他自己感兴趣的餐厅，晚餐后早些休息，为31日跨年蓄力。`
+      }
+    ],
+
+    "2025-12-31": [
+      {
+        time: "10:30",
+        html: `在酒店享用轻松的早餐或 Brunch，上午不安排长途行程，可在 Balluta Bay 一带散步、喝咖啡。`
+      },
+      {
+        time: "14:30",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a> 打车前往瓦莱塔老城（City Gate 附近），车程约15–20分钟，费用约€15–20。`
+      },
+      {
+        time: "15:00",
+        html: `在瓦莱塔老城随意走一走，顺便提前感受跨年布置与氛围。`
+      },
+      {
+        time: "16:00",
+        html: `在 <a href="https://www.google.com/maps/search/?api=1&query=Legligin+Wine+Bar+Valletta" target="_blank" rel="noopener noreferrer">Legligin</a> 享用早场晚餐（已预订 16:00），以马耳他式多道小盘 Tasting Menu 为主，预计用餐至18:00左右，人均约€40–50。`
+      },
+      {
+        time: "18:00",
+        html: `晚餐后可在老城周边的咖啡馆或酒吧坐一会儿，期间也可以回酒店附近找个安静角落休息，视体力情况而定。`
+      },
+      {
+        time: "20:30",
+        html: `前往 <a href="https://www.google.com/maps/search/?api=1&query=St+George%27s+Square+Valletta" target="_blank" rel="noopener noreferrer">St George's Square</a> 参加瓦莱塔跨年主舞台庆典，建议提前到场找到视野和进出路线都比较好的位置。`
+      },
+      {
+        time: "23:50",
+        html: `随着现场音乐和灯光一起倒数迎接新年，0点时可以抬头观看 Grand Harbour 上空的烟花秀（可视当晚人流适当调整观赏点）。`
+      },
+      {
+        time: "00:30",
+        html: `活动结束后，从城门外或 Floriana 一带乘出租车返回 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a>，车程约20–30分钟，费用约€25–35（跨年夜打车需求较多，可能需要等待）。`
+      }
+    ],
+
+    "2026-01-01": [
+      {
+        time: "10:30",
+        html: `新年早上晚起，在酒店悠闲吃早餐，完全放松不赶行程。`
+      },
+      {
+        time: "12:00",
+        html: `可选择在 <a href="https://www.google.com/maps/search/?api=1&query=Balluta+Bay+Malta" target="_blank" rel="noopener noreferrer">Balluta Bay</a> 和 <a href="https://www.google.com/maps/search/?api=1&query=Sliema+Seafront" target="_blank" rel="noopener noreferrer">Sliema Seafront</a> 一带散步，慢慢走到 Sliema 再打车/乘公交回酒店。`
+      },
+      {
+        time: "13:00",
+        html: `午餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Peperoncino+Restaurant+St+Julian%27s" target="_blank" rel="noopener noreferrer">Peperoncino</a> —— 意大利 / 地中海菜；距酒店步行约8–10分钟；谷歌评分约4.5★；人均约€30–40。`
+      },
+      {
+        time: "13:01",
+        html: `午餐备选 2：<a href="https://www.google.com/maps/search/?api=1&query=Zeri%27s+Restaurant+St+Julian%27s" target="_blank" rel="noopener noreferrer">Zeri's Restaurant</a> —— 海鲜与牛排；在 Portomaso 一带；从酒店步行约15–20分钟或短途打车；谷歌评分约4.5★；人均约€35–45。`
+      },
+      {
+        time: "19:30",
+        html: `晚餐后可再轻度体验一次圣朱利安斯夜生活：在 Balluta/Spinola Bay 找一间喜欢的酒吧坐坐，或者去 <a href="https://www.google.com/maps/search/?api=1&query=Paceville+St+Julian%27s" target="_blank" rel="noopener noreferrer">Paceville</a> 主街逛逛，感受不同的新年气氛，尽量不要玩到太晚，以免影响第二天早班机。`
+      }
+    ],
+
+    "2026-01-02": [
+      {
+        time: "06:30",
+        html: `从 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a> 办理退房，乘出租车前往 <a href="https://www.google.com/maps/search/?api=1&query=Malta+International+Airport" target="_blank" rel="noopener noreferrer">Malta International Airport</a>，车程约20–25分钟，费用约€20–25。`
+      },
+      {
+        time: "07:00",
+        html: `抵达机场，办理登机手续与托运行李，预留充足时间通过安检。航班：卡塔尔航空 QR382，起飞时间 09:20。`
+      }
+    ]
+  };
+
+  // 创建 UI
+  const dateKeys = Object.keys(itineraryData).sort();
+  const buttonsContainer = document.getElementById('date-buttons');
+  const itinerariesContainer = document.getElementById('itineraries');
+
+  dateKeys.forEach(dateStr => {
+    const dateObj = new Date(dateStr + 'T00:00:00');
+    const label = dateObj.toLocaleDateString('zh-CN', {
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'short'
+    });
+
+    const btn = document.createElement('button');
+    btn.className = 'date-btn';
+    btn.dataset.date = dateStr;
+    btn.textContent = label;
+    btn.addEventListener('click', () => showItinerary(dateStr));
+    buttonsContainer.appendChild(btn);
+
+    const dayDiv = document.createElement('div');
+    dayDiv.id = 'itin-' + dateStr;
+    dayDiv.className = 'itinerary';
+
+    const title = document.createElement('div');
+    title.className = 'day-title';
+    title.textContent = dateObj.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long'
+    });
+    dayDiv.appendChild(title);
+
+    itineraryData[dateStr].forEach(item => {
+      const actDiv = document.createElement('div');
+      actDiv.className = 'activity';
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'time';
+      timeSpan.textContent = item.time;
+      actDiv.appendChild(timeSpan);
+
+      const descSpan = document.createElement('span');
+      descSpan.className = 'desc';
+      descSpan.innerHTML = item.html;
+      actDiv.appendChild(descSpan);
+
+      dayDiv.appendChild(actDiv);
+    });
+
+    itinerariesContainer.appendChild(dayDiv);
+  });
+
+  function showItinerary(dateStr) {
+    dateKeys.forEach(d => {
+      const div = document.getElementById('itin-' + d);
+      if (div) div.classList.remove('active');
+      const b = document.querySelector('.date-btn[data-date="' + d + '"]');
+      if (b) b.classList.remove('active');
+    });
+    const activeDiv = document.getElementById('itin-' + dateStr);
+    if (activeDiv) activeDiv.classList.add('active');
+    const activeBtn = document.querySelector('.date-btn[data-date="' + dateStr + '"]');
+    if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  // 默认显示今天，如果不在范围内则显示第一天
+  (function initDefaultDay() {
+    const today = new Date();
+    const key = today.toISOString().slice(0, 10);
+    if (itineraryData[key]) {
+      showItinerary(key);
+    } else {
+      showItinerary(dateKeys[0]);
+    }
+  })();
+</script>
 </body>
 </html>
