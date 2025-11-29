@@ -1,0 +1,157 @@
+"<!DOCTYPE html>
+<html lang=""zh-CN"">
+<head>
+  <meta charset=""UTF-8"">
+  <title>Bethlehem f’ Għajnsielem 仿真圣诞村 · 马耳他旅行讲解</title>
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, ""PingFang SC"",
+                   ""Hiragino Sans GB"", ""Microsoft YaHei"", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+    .wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 12px 40px;
+    }
+    header {
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      color: #154c79;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #154c79;
+      background: #fff;
+      color: #154c79;
+      cursor: pointer;
+    }
+    .btn.stop {
+      border-color: #999;
+      color: #555;
+    }
+    .btn:hover {
+      background: #154c79;
+      color: #fff;
+    }
+    .btn.stop:hover {
+      background: #666;
+      color: #fff;
+    }
+    .back-link {
+      font-size: 13px;
+      text-decoration: none;
+      color: #1f6aa6;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 12px 16px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    #content p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin: 0 0 10px;
+      text-align: justify;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 19px; }
+      #content p { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div class=""wrapper"">
+  <header>
+    <h1>Bethlehem f’ Għajnsielem 仿真圣诞村</h1>
+    <div class=""subtitle"">戈佐岛 Għajnsielem · 真人伯利恒村体验</div>
+  </header>
+
+  <div class=""toolbar"">
+    <button class=""btn"" onclick=""speakMain()"">▶ 播放本页讲解</button>
+    <button class=""btn stop"" onclick=""stopSpeak()"">■ 停止朗读</button>
+    <a class=""back-link"" href=""index.html"">← 返回行程总览</a>
+  </div>
+
+  <div class=""card"" id=""content"">
+      <p>Bethlehem f’ Għajnsielem 是戈佐岛上极具地方特色的圣诞活动，自 2008 年起，Għajnsielem 村旁的 Ta' Passi 田地每逢圣诞季就会被布置成一万多平方米的“真人伯利恒村”。这里不仅有马槽和圣家，还搭建了木匠铺、铁匠铺、橄榄压榨坊、小集市和客栈等场景，所有角色都由当地居民和志愿者扮演。</p>
+      <p>和普通“蜡像式”马槽不同，这里强调的是“活着的村庄”：居民会真的在现场烤面包、加工羊毛、喂养牲畜，小朋友则打扮成牧羊人或村民在田间奔跑。游客可以穿梭在狭窄小路、石屋和牲畜棚之间，感受两千年前巴勒斯坦乡村的氛围，同时也看到当代戈佐社区如何通过这个项目凝聚几代人的参与。</p>
+      <p>活动通常在圣诞前后若干天开放，免费或象征性收费，具体开放日和时段每年略有不同。你们从 Mgarr 港口过来只需几分钟车程或步行即可抵达，白天适合拍摄全景和田野背景，傍晚灯光点亮后则更具故事感。对行程来说，这是一段从“游客视角”暂时切换成“旁观社区节日”的时间，也是一种非常本地化的圣诞体验。</p>
+  </div>
+</div>
+
+<script>
+  let voices = [];
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    voices = window.speechSynthesis.getVoices() || [];
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function speakText(text) {
+    if (!('speechSynthesis' in window)) {
+      alert('当前浏览器不支持语音朗读，可以直接阅读文字。');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+
+    let zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('zh'));
+    if (!zhVoice) {
+      zhVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes('zh-cn'));
+    }
+    if (zhVoice) {
+      utter.voice = zhVoice;
+    } else if (voices.length > 0) {
+      utter.voice = voices[0];
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function speakMain() {
+    const paras = Array.from(document.querySelectorAll('#content p'));
+    const text = paras.map(p => p.textContent.trim()).join('。');
+    speakText(text);
+  }
+
+  function stopSpeak() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+</script>
+</body>
+</html>
+"
