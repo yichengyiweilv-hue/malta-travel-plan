@@ -121,6 +121,68 @@
     a:hover {
       text-decoration: underline;
     }
+
+    /* 额外景点 & 历史背景模块样式 */
+    .section-block {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #e0e0e0;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+    .extra-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      color: var(--text-main);
+    }
+    .extra-list li {
+      margin-bottom: 3px;
+    }
+    .history-card {
+      background: #fafafa;
+      border: 1px dashed #e0e0e0;
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+    }
+    .history-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .history-text {
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0 0 4px;
+    }
+    .speak-btn {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--primary-light);
+      background: #fff;
+      color: var(--primary-light);
+      cursor: pointer;
+    }
+    .speak-btn.speak-stop {
+      margin-left: 6px;
+      border-color: #999;
+      color: #666;
+    }
+    .speak-btn:active {
+      background: var(--primary-light);
+      color: #fff;
+    }
+    .speak-btn.speak-stop:active {
+      background: #999;
+      color: #fff;
+    }
+
     @media (max-width: 600px) {
       header h1 { font-size: 18px; }
       .time { flex-basis: 48px; }
@@ -140,7 +202,31 @@
 </div>
 
 <script>
-  // 行程数据：按日期分组，每个项包含时间和 HTML 描述
+  // ===== 简单语音朗读：用浏览器自带 speechSynthesis 读中文 =====
+  function speakText(text) {
+    if (!('speechSynthesis' in window)) {
+      alert('当前浏览器不支持语音朗读，可以直接阅读下面的文字。');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+    window.speechSynthesis.speak(utter);
+  }
+  function stopSpeak() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+  function speakFromSibling(btn) {
+    const card = btn.closest('.history-card');
+    if (!card) return;
+    const p = card.querySelector('.history-text');
+    if (!p) return;
+    speakText(p.textContent);
+  }
+
+  // ===== 正常行程时间轴数据 =====
   const itineraryData = {
     "2025-12-22": [
       {
@@ -170,6 +256,43 @@
       {
         time: "21:17",
         html: `晚餐备选 3：<a href="https://www.google.com/maps/search/?api=1&query=The+Harbour+Club+Valletta" target="_blank" rel="noopener noreferrer">The Harbour Club</a> —— 现代地中海料理，港景露台；从酒店步行约10分钟；谷歌评分约4.4★；人均约€35–45。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（如果当晚还不想回房间）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=St+George%27s+Square+Valletta" target="_blank" rel="noopener noreferrer">St George's Square 圣乔治广场</a> —— 免费，从酒店步行约5–7分钟，适合看政府宫外观与夜间灯光，建议停留30–45分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Lower+Barrakka+Gardens+Valletta" target="_blank" rel="noopener noreferrer">Lower Barrakka Gardens</a> —— 免费，步行约12–15分钟，可远眺 Grand Harbour 和 Siege Bell Memorial，建议停留约30分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Valletta+Waterfront" target="_blank" rel="noopener noreferrer">Valletta Waterfront</a> —— 可在白天或另一天前往，打车约8–10分钟（约€8–10），彩色旧仓库立面+海滨酒吧，建议停留45–60分钟。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">瓦莱塔老城（Valletta）</div>
+              <p class="history-text">
+                瓦莱塔是圣约翰骑士团在一五六六年大围攻之后重建的堡垒城市，按棋盘式街道规划，短短一平方公里内集中了城墙、教堂与骑士宫殿，如今整座城市被列入世界文化遗产。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">上巴拉卡花园 Upper Barrakka Gardens</div>
+              <p class="history-text">
+                上巴拉卡花园最早是骑士团高层的私人花园，位于瓦莱塔南侧制高点，下方就是鸣炮致敬的大炮台，从露台可以俯瞰大港和对岸的三姐妹城，是感受马耳他海上防御体系的绝佳视角。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -213,6 +336,43 @@
       {
         time: "21:15",
         html: `晚餐后步行回 City Gate 一带，顺路逛 <a href="https://www.google.com/maps/search/?api=1&query=Triton+Fountain+Valletta" target="_blank" rel="noopener noreferrer">Triton Fountain</a> 旁的 Fairyland Santa's City 圣诞城与圣诞市集，体验游乐项目与摊位小吃。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（瓦莱塔白天有多余时间时）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=National+Museum+of+Archaeology+Valletta" target="_blank" rel="noopener noreferrer">National Museum of Archaeology 国家考古博物馆</a> —— 成人门票约€5–10，建议预留60–90分钟，集中展示新石器时代神庙文化相关文物。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=MUZA+Malta+National+Community+Art+Museum" target="_blank" rel="noopener noreferrer">MUŻA 艺术博物馆</a> —— 成人门票约€10，建议停留60–90分钟，可按兴趣快速浏览马耳他及欧洲艺术史。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Fort+St+Elmo+National+War+Museum+Valletta" target="_blank" rel="noopener noreferrer">Fort St Elmo & National War Museum</a> —— 成人约€10–12，建议预留约90分钟，了解大围攻与二战海空战背景。 </li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">圣约翰副主教座堂 St Johns Co‑Cathedral</div>
+              <p class="history-text">
+                圣约翰副主教座堂建于十六世纪七十年代，是骑士团的会堂教堂，外观相对朴素，内部却极尽华丽，整片大理石地面下安葬着数百位骑士，其中最著名的藏品是卡拉瓦乔的画作《圣约翰的斩首》。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">国家考古博物馆</div>
+              <p class="history-text">
+                国家考古博物馆位于一座十六世纪骑士旅馆建筑中，收藏了马耳他从早期新石器时代到铜器时代的重要文物，包括著名的“睡美人”与“马耳他维纳斯”等雕像，是理解岛上史前巨石神庙文化的钥匙。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -256,6 +416,43 @@
       {
         time: "00:15",
         html: `从教堂步行返回酒店，注意街道人流和个人物品安全。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（三姐妹城一带）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Inquisitors+Palace+Birgu" target="_blank" rel="noopener noreferrer">Inquisitor's Palace 审判官宫</a> —— 成人门票约€10–12，馆内展示马耳他宗教裁判所历史，建议停留60–90分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Malta+at+War+Museum+Birgu" target="_blank" rel="noopener noreferrer">Malta at War Museum</a> —— 二战防空洞与地下掩体博物馆，成人约€14，建议参观60分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Gardjola+Gardens+Senglea" target="_blank" rel="noopener noreferrer">Gardjola Gardens</a>（Senglea）—— 免费小花园，可俯瞰整片 Grand Harbour，建议停留30分钟，如体力好可步行或短途打车前往。 </li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">三姐妹城与 Birgu</div>
+              <p class="history-text">
+                三姐妹城指的是大港南岸的 Birgu、Senglea 和 Cospicua，其中 Birgu 在骑士团早期曾是总部所在地，也是一五六五年大围攻中抵挡奥斯曼舰队的前线，如今保留了大量中世纪街巷和港口防御工事。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">马耳他圣诞子夜弥撒</div>
+              <p class="history-text">
+                在马耳他，家人通常在平安夜参加午夜弥撒迎接圣诞，一些教堂会由儿童而不是神父宣讲圣诞布道，象征新生命和希望。圣约翰副主教座堂在这一天会更加拥挤，是体验当地宗教传统最具仪式感的场景之一。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -286,7 +483,36 @@
       },
       {
         time: "19:00",
-        html: `晚餐备选 1：再次到 <a href="https://www.google.com/maps/search/?api=1&query=Rampila+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Rampila</a> 或其他喜欢的餐厅轻松吃一餐。`
+        html: `晚餐备选 1：可以再次到 <a href="https://www.google.com/maps/search/?api=1&query=Rampila+Restaurant+Valletta" target="_blank" rel="noopener noreferrer">Rampila</a> 或其他喜欢的餐厅轻松吃一餐。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（瓦莱塔相对轻松的一天）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Fort+St+Elmo+National+War+Museum+Valletta" target="_blank" rel="noopener noreferrer">Fort St Elmo 国防博物馆</a> —— 如果前几天没去，这天相对空，可以安排九十分钟参观，成人约€10–12。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=The+Malta+Experience+Valletta" target="_blank" rel="noopener noreferrer">The Malta Experience 影像秀</a> —— 多语言影片介绍马耳他历史，时长约45分钟，票价约€15，可作为对全岛历史的“预习”。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Siege+Bell+War+Memorial+Valletta" target="_blank" rel="noopener noreferrer">Siege Bell War Memorial</a> —— 免费的战争纪念钟楼，靠近 Lower Barrakka，一并参观约30分钟。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">马耳他的圣诞传统</div>
+              <p class="history-text">
+                马耳他人的圣诞更偏家庭与教会氛围，家家户户会布置耶稣诞生场景的马槽模型，平安夜参加午夜弥撒，圣诞当天则多在城市里悠闲散步或与家人聚餐，相比北欧型的圣诞市集，这里少了喧嚣，多了一点地方感。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -322,6 +548,43 @@
       {
         time: "18:30",
         html: `打车返回瓦莱塔，车程约25–30分钟，费用约€25。晚餐可在老城附近随意选择轻松一点的餐厅。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（Mdina & Rabat 一带）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Domus+Romana+Malta" target="_blank" rel="noopener noreferrer">Domus Romana 罗马别墅</a> —— 小型博物馆，展示精美马赛克与罗马时期生活遗迹，成人约€6，建议停留45–60分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=St+Paul%27s+Catacombs+Rabat" target="_blank" rel="noopener noreferrer">St Paul's Catacombs</a> —— 早期基督徒地下墓穴群，成人门票约€6，需预留60–90分钟，地面与地下区域较多台阶。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Mdina+Ditch+Gardens" target="_blank" rel="noopener noreferrer">Mdina Ditch Gardens</a> —— 古城护城河改造而成的下沉花园，免费，适合午后在城墙下安静散步约30分钟。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">Mdina “静城”</div>
+              <p class="history-text">
+                Mdina 在中世纪与骑士团初期曾是马耳他的首都，城墙内街道狭窄、车流极少，因此常被称为“静城”。城中贵族宫邸与教堂集中，站在城墙上可以俯瞰半岛与海岸，是感受到岛上古都气质的最好地方。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">Verdala 宫与 Buskett 花园</div>
+              <p class="history-text">
+                Verdala 宫建于十六世纪末，是骑士团大团长的夏季行宫，如今也是马耳他总统的夏季官邸。周围的 Buskett 花园是岛上少见的大面积林地，曾用于狩猎，如今多用来举办节庆活动和灯光步道。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -365,6 +628,43 @@
       {
         time: "17:00",
         html: `打车返回瓦莱塔，车程约25分钟，费用约€25。晚上自由安排，可在老城找一家简单餐厅、早点休息。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（马耳他南部一带）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Tarxien+Temples+Malta" target="_blank" rel="noopener noreferrer">Tarxien Temples</a> —— 另一处巨石神庙群，成人约€6–10，如热爱考古，可在返回瓦莱塔前顺路参观约45–60分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Ghar+Dalam+Cave+Malta" target="_blank" rel="noopener noreferrer">Għar Dalam Cave</a> —— 史前洞穴与动物骨骼遗址，距离 Marsaxlokk 约车程15分钟，建议停留约60分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Delimara+Peninsula+Malta" target="_blank" rel="noopener noreferrer">Delimara Peninsula</a> 海岬 —— 喜欢自然风光的话，可让出租车在某处观景点稍作停留拍照约20分钟。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">蓝洞 Blue Grotto</div>
+              <p class="history-text">
+                马耳他蓝洞是一组海蚀洞，石灰岩峭壁在阳光和海水折射下呈现出蓝绿变幻的色彩，早晨光线最佳，传统小舟进入洞内时，船底仿佛悬在蓝色光带之上，是岛上最经典的自然景观之一。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">Ħaġar Qim 与 Mnajdra 神庙</div>
+              <p class="history-text">
+                这两组巨石神庙修建于公元前四千年左右，比埃及金字塔还早几百年，是世界上最古老的独立石建筑之一，其祭坛与石雕反映了早期岛上居民对生育与天体的崇拜，如今被列入世界文化遗产。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -379,7 +679,7 @@
       },
       {
         time: "11:30",
-        html: `从酒店出门，沿 Balluta Bay 海湾步道向 <a href="https://www.google.com/maps/search/?api=1&query=Sliema+Seafront" target="_blank" rel="noopener noreferrer">Sliema</a> 方向散步，一路都是海景，单程步行约30–40分钟。`
+        html: `从酒店出门，沿 Balluta Bay 海湾步道向 <a href="https://www.google.com/maps/search/?api=1&query=Sliema+Seafront" target="_blank" rel="noopener noreferrer">Sliema Seafront</a> 方向散步，一路都是海景，单程步行约30–40分钟。`
       },
       {
         time: "13:00",
@@ -396,6 +696,35 @@
       {
         time: "20:00",
         html: `夜间可在 <a href="https://www.google.com/maps/search/?api=1&query=Spinola+Bay+St+Julian%27s" target="_blank" rel="noopener noreferrer">Spinola Bay</a> 和 <a href="https://www.google.com/maps/search/?api=1&query=Paceville+St+Julian%27s" target="_blank" rel="noopener noreferrer">Paceville</a> 一带轻松体验圣朱利安斯的夜生活：先沿海湾散步，再挑一两家酒吧喝一杯，步行往返即可。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（Balluta / Sliema / St Julian's）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Parish+Church+of+Our+Lady+of+Mount+Carmel+Balluta" target="_blank" rel="noopener noreferrer">Balluta Bay 圣母教堂</a> —— 哥特复兴风格教堂，位于海湾正面，免费参观，建议停留20–30分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Tigne+Point+Sliema" target="_blank" rel="noopener noreferrer">Tigné Point</a> —— Sliema 尖端购物与观景区域，可俯瞰瓦莱塔天际线，建议安排45–60分钟散步购物。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Portomaso+Marina+St+Julian%27s" target="_blank" rel="noopener noreferrer">Portomaso Marina</a> —— 高档游艇码头区，从酒店步行或短途打车可达，适合晚间散步约30分钟。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">Balluta Bay 与圣朱利安斯</div>
+              <p class="history-text">
+                Balluta Bay 与圣朱利安斯一带原本是渔村和郊外别墅聚集地，二十世纪后逐渐发展为海滨度假与夜生活中心，沿岸的步行道连接 Sliema 与 Paceville，既有旧式石屋与教堂，也有现代酒店和酒吧，是马耳他“现代一面”的缩影。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -447,6 +776,43 @@
       {
         time: "19:45",
         html: `从 Ċirkewwa 打车返回 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a>，车程约30–35分钟，费用约€30–35。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（Gozo 戈佐岛）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Gozo+Museum+of+Archaeology" target="_blank" rel="noopener noreferrer">Gozo Museum of Archaeology</a> —— 位于 Cittadella 内，成人约€5–6，展示戈佐岛从史前到中世纪的考古发现，建议停留45–60分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Basilica+of+Ta%27+Pinu+Gozo" target="_blank" rel="noopener noreferrer">Ta' Pinu 圣殿</a> —— 著名朝圣教堂，可在往返 Dwejra 的途中让出租车顺路停留约30–40分钟参观。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Xlendi+Bay+Gozo" target="_blank" rel="noopener noreferrer">Xlendi Bay</a> —— 小巧海湾村落，如时间与体力允许，可安排黄昏时分在这里散步或喝一杯，看海蚀峭壁，停留约45分钟。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">Cittadella 戈佐城堡</div>
+              <p class="history-text">
+                戈佐首府 Victoria 山丘上的 Cittadella 自青铜时代起便有人定居，后来成为腓尼基与罗马城镇的卫城，中世纪则发展为防御要塞，长期保护岛上居民躲避海盗和入侵势力攻击，是戈佐岛历史的缩影。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">Bethlehem f’ Għajnsielem 仿真圣诞村</div>
+              <p class="history-text">
+                Bethlehem f’ Għajnsielem 是戈佐岛近年来颇受欢迎的真人圣诞村活动，志愿者与演员在田野间重现伯利恒村庄的日常场景和耶稣诞生故事，把宗教传统和乡村生活氛围结合在一起，十分适合慢慢逛和拍照。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -482,6 +848,43 @@
       {
         time: "19:30",
         html: `晚餐备选 1：<a href="https://www.google.com/maps/search/?api=1&query=Wigi%27s+Kitchen+St+Julian%27s" target="_blank" rel="noopener noreferrer">Wigi's Kitchen</a>（如尚未光顾）或附近其他自己感兴趣的餐厅，晚餐后早些休息，为31日跨年蓄力。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（蓝礁湖 / Mellieħa 一带）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Mellieha+Parish+Church" target="_blank" rel="noopener noreferrer">Mellieħa Parish Church</a> —— 坐落在山丘上的教堂，可在返回途中让出租车短暂停靠，俯瞰沙滩与海湾，停留约30分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Ghadira+Bay+Malta" target="_blank" rel="noopener noreferrer">Għadira Bay</a> —— 马耳他最长的沙滩之一，冬季无法下海但适合散步，看海约30–45分钟。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Popeye+Village+Viewpoint" target="_blank" rel="noopener noreferrer">Popeye Village Viewpoint</a> —— 如果只想拍拍照，也可以只在外侧观景台停留15–20分钟即可。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">Comino 与蓝礁湖 Blue Lagoon</div>
+              <p class="history-text">
+                Comino 是马耳他与戈佐之间的小岛，长期几乎无人定居，因为清澈浅滩与白色岩石形成了著名的蓝礁湖景观。夏季这里是游船与潜水天堂，冬季则相对清静，适合徒步和拍照。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+            <div class="history-card">
+              <div class="history-title">Popeye Village 大力水手村</div>
+              <p class="history-text">
+                大力水手村原本是一九八零年好莱坞电影《大力水手》的外景拍摄地，木屋村落完工后被保留下来，逐渐发展成主题小乐园和观景点，是“拍照比游玩更重要”的网红景区之一。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -517,6 +920,34 @@
       {
         time: "00:30",
         html: `活动结束后，从城门外或 Floriana 一带乘出租车返回 <a href="https://www.google.com/maps/search/?api=1&query=Malta+Marriott+Resort+%26+Spa+Balluta+Bay" target="_blank" rel="noopener noreferrer">Malta Marriott</a>，车程约20–30分钟，费用约€25–35（跨年夜打车需求较多，可能需要等待）。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（跨年前后如果白天有精力）</div>
+            <ul class="extra-list">
+              <li>如果前几天没有参观过，可以把 <a href="https://www.google.com/maps/search/?api=1&query=National+Museum+of+Archaeology+Valletta" target="_blank" rel="noopener noreferrer">国家考古博物馆</a> 或 <a href="https://www.google.com/maps/search/?api=1&query=MUZA+Malta+National+Community+Art+Museum" target="_blank" rel="noopener noreferrer">MUŻA 艺术馆</a> 安排在今天下午，二者各需约60–90分钟。</li>
+              <li>也可以在 <a href="https://www.google.com/maps/search/?api=1&query=Upper+Barrakka+Gardens+Valletta" target="_blank" rel="noopener noreferrer">Upper Barrakka</a> 或 <a href="https://www.google.com/maps/search/?api=1&query=Lower+Barrakka+Gardens+Valletta" target="_blank" rel="noopener noreferrer">Lower Barrakka</a> 再拍一轮黄昏港景，为年末画个句号。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">圣乔治广场与瓦莱塔跨年</div>
+              <p class="history-text">
+                圣乔治广场位于瓦莱塔中心地带，两侧是总统官邸所在的旧大团长宫殿与国家图书馆，长久以来是市民集会与庆典的核心场所。跨年夜这里会搭建主舞台和灯光装置，把历史广场变成露天音乐会现场，与港口烟花相互映衬。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -540,6 +971,34 @@
       {
         time: "19:30",
         html: `晚餐后可再轻度体验一次圣朱利安斯夜生活：在 Balluta/Spinola Bay 找一间喜欢的酒吧坐坐，或者去 <a href="https://www.google.com/maps/search/?api=1&query=Paceville+St+Julian%27s" target="_blank" rel="noopener noreferrer">Paceville</a> 主街逛逛，感受不同的新年气氛，尽量不要玩到太晚，以免影响第二天早班机。`
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">额外景点备选（轻松收尾的一天）</div>
+            <ul class="extra-list">
+              <li><a href="https://www.google.com/maps/search/?api=1&query=Sliema+Harbour+Cruise" target="_blank" rel="noopener noreferrer">Sliema 港湾游船</a> —— 如天气良好，可以考虑参加一小时左右的大港游船，票价约€20–25，从水面再看一次瓦莱塔城墙。</li>
+              <li><a href="https://www.google.com/maps/search/?api=1&query=The+Point+Shopping+Mall+Sliema" target="_blank" rel="noopener noreferrer">The Point 购物中心</a> —— 想买点东西带回家，可在此安排约60分钟补货和闲逛。</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        time: "",
+        html: `
+          <div class="section-block">
+            <div class="section-title">历史背景 / 语音讲解</div>
+            <div class="history-card">
+              <div class="history-title">Sliema 海滨长廊</div>
+              <p class="history-text">
+                Sliema 曾是瓦莱塔对岸的别墅区，如今发展为商业与住宅混合的海滨新城，长长的海岸步道连接到圣朱利安斯，一侧是地中海与岩石海滩，一侧是咖啡馆和现代公寓，是当地人最常散步和跑步的路线之一。
+              </p>
+              <button class="speak-btn" onclick="speakFromSibling(this)">▶ 播放讲解</button>
+              <button class="speak-btn speak-stop" onclick="stopSpeak()">■ 停止</button>
+            </div>
+          </div>
+        `
       }
     ],
 
@@ -555,7 +1014,7 @@
     ]
   };
 
-  // 创建 UI
+  // ===== 创建 UI =====
   const dateKeys = Object.keys(itineraryData).sort();
   const buttonsContainer = document.getElementById('date-buttons');
   const itinerariesContainer = document.getElementById('itineraries');
@@ -598,12 +1057,12 @@
       const timeSpan = document.createElement('span');
       timeSpan.className = 'time';
 
-      // ✅ 关键改动：连续“备选”餐厅，只在第一行显示时间
+      // 连续“备选”餐厅只在第一行显示时间
       let showTime = true;
       if (index > 0) {
         const prev = items[index - 1];
         const thisIsOption = item.html.includes("备选");
-        const prevIsOption = prev.html.includes("备选");
+        const prevIsOption = prev.html && prev.html.includes && prev.html.includes("备选");
         if (thisIsOption && prevIsOption) {
           showTime = false;
         }
